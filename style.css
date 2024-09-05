@@ -221,10 +221,10 @@ span{
 }
 @keyframes words {
     0%, 20% {
-        content: 'Front-End Dev';
+        content: 'Front-End Dev.';
     }
     21%, 40% {
-        content: 'Back-End Dev';
+        content: 'Back-End Dev.';
     }
     41%, 60% {
         content: 'Game Developer';
@@ -296,6 +296,10 @@ span{
     border-radius: 3rem;
     cursor: url('image/pointer.png'), pointer;
     transition: 0.3s ease;
+    width: 100%; /* Tam genişlik */
+        padding: 1rem; /* İçerik boşluğu */
+        box-sizing: border-box; /* Padding ve border genişliği hesapla */
+    
 }
 .service-box:hover{
     background: transparent;
@@ -340,6 +344,14 @@ section {
     .services-container {
         grid-template-columns: repeat(1,1fr);
     }
+    .service-info h4 {
+        font-size: 1.8rem; /* Küçük ekranlar için daha küçük yazı boyutu */
+    }
+    .service-info p {
+        font-size: 1.3rem; /* Küçük ekranlar için daha küçük yazı boyutu */
+        margin-bottom: 3rem;
+    }
+    
 }
 /* skills section */
 .skills{
@@ -399,7 +411,7 @@ section {
         padding: 0;
     }
     .skills .container .row{
-        grid-template-columns: repeat(2,1fr);
+        grid-template-columns: repeat(1,1fr);
         margin: 1rem;
         padding: 2rem 0.2rem 2rem 0.2rem;
         gap:1rem;
