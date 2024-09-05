@@ -286,7 +286,7 @@ span{
 }
 .services-container{
     display: grid;
-    grid-template-columns: repeat(3,1fr);
+    grid-template-columns: repeat(2,1fr);
     align-items: center;
     gap: 2.5rem;
 }
@@ -373,7 +373,7 @@ section {
 }
 .skills .container .row{
     display: grid;
-    grid-template-columns: repeat(3,1fr);
+    grid-template-columns: repeat(2,1fr);
     flex-wrap: wrap;
     gap: 1.8rem;
 }
@@ -405,23 +405,7 @@ section {
     margin-left: 0.5rem;
 
 }
-@media screen and (max-width:990px){
-    .skills .container {
-        margin: 0;
-        padding: 0;
-    }
-    .skills .container .row{
-        grid-template-columns: repeat(1,1fr);
-        margin: 1rem;
-        padding: 2rem 0.2rem 2rem 0.2rem;
-        gap:1rem;
-    }
-    .skills .container{
-        margin-top: 5px;
-        width: 100%;
-    }
-}
-@media screen and (max-width:600px){
+@media screen and (max-width:900px){
     .skills .container {
         margin: 0;
         padding: 0;
