@@ -1,224 +1,768 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <link rel="icon" href="image/favicon.ico" type="image/x-icon">
-
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Halit's Portfolio</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Halit Göymen</title>
+<meta name="description" content="Halit Göymen — Software Engineering student building backend systems, computer vision and LLM-powered applications.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECEEF2; --paper-raised:#F5F6F8; --ink:#10151C; --ink-soft:#29303A;
+    --line:#B9C2CC; --line-soft:#D3D9DF; --accent:#8A5A18; --accent-2:#2C5F8A;
+    --grid-line: rgba(16,21,28,0.055); --shadow: rgba(16,21,28,0.16);
+    --font-display:'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-body:'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --font-mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0F1317; --paper-raised:#161B20; --ink:#E7EBEF; --ink-soft:#C3CBD3;
+      --line:#3A434C; --line-soft:#2A3138; --accent:#E1A147; --accent-2:#6FA8D8;
+      --grid-line: rgba(231,235,239,0.06); --shadow: rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0F1317; --paper-raised:#161B20; --ink:#E7EBEF; --ink-soft:#C3CBD3;
+    --line:#3A434C; --line-soft:#2A3138; --accent:#E1A147; --accent-2:#6FA8D8;
+    --grid-line: rgba(231,235,239,0.06); --shadow: rgba(0,0,0,0.5);
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  [hidden]{ display:none !important; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--font-body); font-size:1.05rem; line-height:1.7;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  a{ color:inherit; }
+  ::selection{ background:var(--accent); color:var(--paper); }
+  a:focus-visible, .contact-card:focus-visible, .lang-btn:focus-visible{
+    outline:2px solid var(--accent-2); outline-offset:3px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  }
+
+  .mono{ font-family:var(--font-mono); }
+  .label{
+    font-family:var(--font-mono); font-size:0.76rem; font-weight:500; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--ink-soft);
+  }
+
+  .bbox{
+    position:relative;
+    background:
+      linear-gradient(to right, var(--line) 2px, transparent 2px) top left / 18px 2px no-repeat,
+      linear-gradient(to right, var(--line) 2px, transparent 2px) bottom left / 18px 2px no-repeat,
+      linear-gradient(to right, var(--line) 2px, transparent 2px) top right / 18px 2px no-repeat,
+      linear-gradient(to right, var(--line) 2px, transparent 2px) bottom right / 18px 2px no-repeat,
+      linear-gradient(to bottom, var(--line) 2px, transparent 2px) top left / 2px 18px no-repeat,
+      linear-gradient(to bottom, var(--line) 2px, transparent 2px) top right / 2px 18px no-repeat,
+      linear-gradient(to bottom, var(--line) 2px, transparent 2px) bottom left / 2px 18px no-repeat,
+      linear-gradient(to bottom, var(--line) 2px, transparent 2px) bottom right / 2px 18px no-repeat;
+  }
+  .bbox.will-animate{ opacity:0; transform:translateY(10px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .bbox.will-animate.in-view{ opacity:1; transform:translateY(0); }
+
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(20px,4vw,56px); }
+
+  /* ---------- Top bar / language switch ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:20; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    background:color-mix(in srgb, var(--paper) 82%, transparent);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .topbar-inner{ display:flex; justify-content:flex-end; padding-top:12px; padding-bottom:12px; }
+  .lang-switch{ position:relative; display:inline-flex; border:1px solid var(--line); padding:2px; }
+  .lang-thumb{
+    position:absolute; top:2px; left:2px; width:calc(50% - 2px); height:calc(100% - 4px);
+    background:var(--accent-2); z-index:0;
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+  }
+  html[data-lang="tr"] .lang-thumb{ transform:translateX(100%); }
+  .lang-btn{
+    position:relative; z-index:1; background:transparent; border:0; cursor:pointer;
+    font-family:var(--font-mono); font-size:0.72rem; font-weight:600; letter-spacing:0.08em;
+    padding:8px 14px; color:var(--ink-soft); transition:color .35s ease;
+  }
+  html:not([data-lang="tr"]) .lang-btn[data-lang-btn="en"]{ color:var(--paper); }
+  html[data-lang="tr"] .lang-btn[data-lang-btn="tr"]{ color:var(--paper); }
+
+  #lang-root{ transition:opacity .18s ease; }
+  #lang-root.swapping{ opacity:0; }
+
+  /* ---------- Layout: rail + content ---------- */
+  .layout{ display:grid; grid-template-columns: 200px minmax(0,1fr); gap:clamp(24px,5vw,72px); align-items:start; padding-top:56px; }
+  @media (max-width:860px){ .layout{ grid-template-columns:1fr; } }
+
+  .rail{ position:sticky; top:64px; display:flex; flex-direction:column; gap:2px; }
+  @media (max-width:860px){ .rail{ position:static; flex-direction:row; flex-wrap:wrap; gap:6px; padding-bottom:8px; border-bottom:1px solid var(--line-soft); } }
+  .rail-indicator{
+    position:absolute; left:0; width:2px; background:var(--accent-2); opacity:0; pointer-events:none;
+    transition: transform .35s cubic-bezier(.4,0,.2,1), height .35s cubic-bezier(.4,0,.2,1), opacity .2s ease;
+  }
+  @media (max-width:860px){ .rail-indicator{ display:none; } }
+  .rail a{
+    text-decoration:none; font-family:var(--font-mono); font-size:0.78rem; letter-spacing:0.08em;
+    color:var(--ink-soft); display:flex; align-items:center; gap:8px;
+    padding:7px 8px 7px 10px; margin-left:-10px;
+    transition:color 0.2s ease;
+  }
+  .rail a:hover{ color:var(--accent); }
+  .rail a.active{ color:var(--accent); font-weight:600; }
+  @media (max-width:860px){ .rail a.active{ border-bottom:2px solid var(--accent-2); } }
+  .rail a .idx{ color:var(--line); font-weight:500; }
+  .rail a.active .idx{ color:var(--accent); }
+  .rail-name{ font-family:var(--font-display); font-weight:700; font-size:1.05rem; margin-bottom:6px; }
+
+  main{ min-width:0; }
+  section{ padding-bottom: clamp(56px,9vw,104px); border-bottom:1px solid var(--line-soft); }
+  section:last-of-type{ border-bottom:none; }
+
+  h1,h2,h3{ font-family:var(--font-display); text-wrap:balance; margin:0; }
+  h2{ font-size:clamp(1.5rem,3vw,2.1rem); font-weight:700; letter-spacing:-0.01em; }
+  .sec-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:28px; }
+  .sec-head .num{ font-family:var(--font-mono); color:var(--accent); font-size:0.85rem; }
+
+  p{ max-width:64ch; }
+  p.lede{ font-size:1.15rem; color:var(--ink-soft); }
+
+  /* ---------- Hero ---------- */
+  .hero{ padding:76px 0 64px; border-bottom:1px solid var(--line-soft); }
+  .hero-frame{ padding:clamp(28px,5vw,52px) clamp(20px,4vw,44px); }
+  .kicker{ margin-bottom:18px; }
+  .hero h1{ font-size:clamp(2.2rem,7vw,5rem); line-height:0.98; font-weight:800; letter-spacing:-0.02em; }
+  .hero h1 .line{ display:block; }
+  .hero-role{ font-family:var(--font-mono); font-size:clamp(0.85rem,1.6vw,1rem); color:var(--accent-2); margin-top:18px; letter-spacing:0.02em; }
+  .status{
+    margin-top:28px; font-family:var(--font-mono); font-size:0.8rem; color:var(--ink-soft);
+    display:flex; flex-wrap:wrap; gap:10px 22px; border-top:1px dashed var(--line); padding-top:18px;
+  }
+  .status b{ color:var(--ink); font-weight:600; }
+
+  /* page-load entrance: brief, staggered, purposeful */
+  @keyframes rise{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:translateY(0); } }
+  .hero-frame .kicker{ animation:rise .5s cubic-bezier(.16,1,.3,1) 0s both; }
+  .hero-frame h1 .line:nth-child(1){ animation:rise .7s cubic-bezier(.16,1,.3,1) .08s both; }
+  .hero-frame h1 .line:nth-child(2){ animation:rise .7s cubic-bezier(.16,1,.3,1) .16s both; }
+  .hero-frame h1 .line:nth-child(3){ animation:rise .7s cubic-bezier(.16,1,.3,1) .24s both; }
+  .hero-frame .hero-role{ animation:rise .6s cubic-bezier(.16,1,.3,1) .38s both; }
+  .hero-frame .status{ animation:rise .6s cubic-bezier(.16,1,.3,1) .48s both; }
+
+  /* ---------- Chips / stack ---------- */
+  .stack-group{ margin-bottom:30px; }
+  .stack-group:last-child{ margin-bottom:0; }
+  .stack-group .label{ margin-bottom:10px; display:block; }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    font-family:var(--font-mono); font-size:0.85rem; font-weight:500; padding:6px 12px;
+    border:1px solid var(--line); color:var(--ink-soft); background:var(--paper-raised);
+    transition:border-color 0.2s ease, color 0.2s ease;
+  }
+  .chip:hover{ border-color:var(--accent); color:var(--ink); }
+
+  /* ---------- Projects ---------- */
+  .projects{ display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:20px; }
+  .project{
+    padding:24px 24px 22px; display:flex; flex-direction:column; gap:12px; background:var(--paper-raised);
+    transition:transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s ease;
+  }
+  .project:hover{ transform:translateY(-3px); box-shadow:0 14px 28px -14px var(--shadow); }
+  .project-top{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .project h3{ font-size:1.2rem; font-weight:700; }
+  .project a.ext{
+    display:inline-flex; align-items:center; font-family:var(--font-mono); font-size:0.76rem;
+    font-weight:500; color:var(--accent-2); text-decoration:none; white-space:nowrap;
+    padding:5px 6px; margin:-5px -6px;
+  }
+  .project a.ext:hover{ text-decoration:underline; }
+  .project p{ font-size:0.96rem; color:var(--ink-soft); max-width:none; }
+  .project .chips{ margin-top:auto; padding-top:4px; }
+  .project .chip{ font-size:0.76rem; font-weight:500; padding:4px 9px; }
+
+  /* ---------- Experience / education ---------- */
+  .exp-row{ display:grid; grid-template-columns:170px minmax(0,1fr); gap:22px; margin-bottom:36px; }
+  @media (max-width:640px){ .exp-row{ grid-template-columns:1fr; gap:8px; } }
+  .exp-row:last-child{ margin-bottom:0; }
+  .exp-date{ font-family:var(--font-mono); font-size:0.78rem; color:var(--accent); padding-top:3px; }
+  .exp-role h3{ font-size:1.08rem; font-weight:700; margin-bottom:2px; }
+  .exp-org{ font-family:var(--font-mono); font-size:0.8rem; color:var(--ink-soft); margin-bottom:12px; }
+  .exp-role ul{ margin:0; padding-left:18px; }
+  .exp-role li{ margin-bottom:6px; max-width:60ch; }
+  .exp-role li::marker{ color:var(--accent); }
+
+  /* ---------- Contact ---------- */
+  .contact-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:16px; }
+  .contact-card{
+    padding:20px 22px; display:flex; flex-direction:column; gap:6px; text-decoration:none; color:var(--ink);
+    background:var(--paper-raised);
+    transition:transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s ease;
+  }
+  .contact-card:not(.static):hover{ transform:translateY(-3px); box-shadow:0 14px 28px -14px var(--shadow); }
+  .contact-card .label{ color:var(--accent-2); }
+  .contact-card span.value{ font-family:var(--font-display); font-weight:600; font-size:1.05rem; word-break:break-word; }
+  .contact-card:not(.static):hover span.value{ color:var(--accent); }
+  .contact-card.static{ cursor:default; }
+
+  footer{ padding:36px 0 60px; font-family:var(--font-mono); font-size:0.78rem; color:var(--ink-soft); text-align:center; }
+</style>
 </head>
-
 <body>
-    <header class="header">
-        <a href="#" class="logo" id="">Halit Göymen</a>
 
-        <nav class="navbar">
-            <a href="#home" class="active">Home</a>
-            <a href="#services">Services</a>
-            <a href="#skills">Skills</a>
-            <a href="#contact">Conatct</a>
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="lang-switch" role="group" aria-label="Language / Dil">
+      <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="true">EN</button>
+      <button type="button" class="lang-btn" data-lang-btn="tr" aria-pressed="false">TR</button>
+      <span class="lang-thumb" aria-hidden="true"></span>
+    </div>
+  </div>
+</div>
 
-        </nav>
+<div id="lang-root">
+
+<div class="wrap layout" id="content-en">
+  <nav class="rail" aria-label="Section index">
+    <span class="rail-indicator" aria-hidden="true"></span>
+    <div class="rail-name">HG</div>
+    <a href="#about"><span class="idx">01</span> About</a>
+    <a href="#stack"><span class="idx">02</span> Stack</a>
+    <a href="#projects"><span class="idx">03</span> Projects</a>
+    <a href="#experience"><span class="idx">04</span> Experience</a>
+    <a href="#contact"><span class="idx">05</span> Contact</a>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="hero-frame bbox">
+        <div class="kicker label">Halit Göymen — CV / 2026</div>
+        <h1><span class="line">Backend &amp;</span><span class="line">AI Systems</span><span class="line">Engineer.</span></h1>
+        <div class="hero-role">Software Engineering Student · İstanbul, Türkiye</div>
+        <div class="status mono">
+          <span>DEGREE: <b>B.Sc. Software Engineering</b></span>
+          <span>GRAD: <b>Expected 2027</b></span>
+          <span>FOCUS: <b>Backend · Computer Vision · LLM Applications</b></span>
+        </div>
+      </div>
     </header>
 
-    <section class="home" id="home">
-        <div class="home-img">
-            <img src="image/blender_red_spider_lily_by_nabyryus_dg7sa80-fullview.jpg" alt="">
-        </div>
-        <div class="home-content">
-            <h1>Hi, It's <span>Halit</span></h1>
-            <h3 class="typing-text">I'm a <span></span></h3>
-            <p>Aspiring Software Engineer | Tech Enthusiast
-                On a journey of self-improvement, diving into software development and everything tech-related.</p>
-            <div class="social-icon">
-                <a target=_blank href="https://www.linkedin.com/in/halit-g%C3%B6ymen-565331211/"><i
-                        class="fa-brands fa-linkedin"></i></a>
-                <a target=_blank href="https://github.com/halitgoymen"><i class="fa-brands fa-github"></i></a>
-                <a target=_blank href="https://www.instagram.com/halidsama/"><i class="fa-brands fa-instagram"></i></a>
-                <a target=_blank href="https://x.com/halidsama"><i class="fa-brands fa-square-x-twitter"></i></a>
-            </div>
-            <a href="#contact" class="btn">Hire Me</a>
-        </div>
+    <section id="about">
+      <div class="sec-head"><span class="num mono">01</span><h2>About</h2></div>
+      <p class="lede">Fourth-year Software Engineering student with hands-on experience in
+      backend development, machine learning, computer vision, RESTful APIs, and AI
+      applications.</p>
+      <p>Experienced with Python, FastAPI, SQL, OOP, database design, Docker, LLM
+      integration, and RAG. One year of experience as a Department Assistant Student,
+      with a strong interest in backend engineering, software architecture, and
+      production-oriented AI applications.</p>
     </section>
 
-    <section class="services" id="services">
-        <h2 class="heading">Services</h2>
-        <div class="services-container">
-            <div class="service-box">
-                <div class="service-info">
-                    <h4>Front-End & Back-End</h4>
-                    <p>I can build a sleek and functional website using HTML, CSS, and PHP, tailored to meet your needs
-                        and stand out online</p>
-                </div>
-            </div>
-            <div class="service-box">
-                <div class="service-info">
-                    <h4>Mobile Developer</h4>
-                    <p>I can develop dynamic and user-friendly mobile apps using Flutter, designed to deliver a seamless
-                        experience and perform effortlessly on any device.</p>
-                </div>
-            </div>
-            <div class="service-box">
-                <div class="service-info">
-                    <h4>Game Developer</h4>
-                    <p>I can design and develop captivating 2D and 3D platform games or mobile games using Unity. With a
-                        focus on creating immersive experiences and high-quality gameplay, I bring creative ideas to
-                        life and ensure your game stands out.</p>
-                </div>
-            </div>
-            <div class="service-box">
-                <div class="service-info">
-                    <h4>Software Developer</h4>
-                    <p>As a software developer, I specialize in crafting efficient and scalable solutions tailored to
-                        your needs. Whether it's developing robust applications or optimizing systems, I combine
-                        technical expertise with creative problem-solving to deliver high-quality results.</p>
-                </div>
-            </div>
-            <div class="service-box">
-                <div class="service-info">
-                    <h4>Automation </h4>
-                    <p>I can develop automation solutions for cafes or similar environments using C#. This includes
-                        order management, product registration, and streamlining workflows to enhance efficiency and
-                        service quality</p>
-                </div>
-            </div>
-            <div class="service-box">
-                <div class="service-info">
-                    <h4>Web Developer</h4>
-                    <p>I can create personalized websites using just HTML and CSS, tailored to your specifications, much
-                        like the examples you see here. Focused on clean design and functionality, I'll ensure your site
-                        looks great and meets your needs.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="skills" id="skills">
-        <h2 class="heading">Skills</h2>
-        <div class="container">
-            <div class="row" id="skillsContainer">
-                <div class="bar">
-                    <div class="info">
-                        <img src="image/csharp.png" alt="">
-                        <span>C#</span>
-                    </div>
-                </div>
-                <div class="bar">
-                    <div class="info">
-                        <img src="image/unity.png" alt="">
-                        <span>Unity</span>
-                    </div>
-                </div>
-                <div class="bar">
-                    <div class="info">
-                        <img src="image/flutter.png" alt="">
-                        <span>Flutter</span>
-                    </div>
-                </div>
-                <div class="bar">
-                    <div class="info">
-                        <img src="image/htmlcss.png" alt="">
-                        <span>HTML & CSS</span>
-                    </div>
-                </div>
-                <div class="bar">
-                    <div class="info">
-                        <img src="image/sqlite.png" alt="">
-                        <span>SQLite</span>
-                    </div>
-                </div>
-                <div class="bar">
-                    <div class="info">
-                        <img src="image/php.png" alt="">
-                        <span>PhP</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!--
+    <section id="stack">
+      <div class="sec-head"><span class="num mono">02</span><h2>Technical Stack</h2></div>
 
+      <div class="stack-group">
+        <span class="label">Languages</span>
+        <div class="chips">
+          <span class="chip">Python</span><span class="chip">Java</span><span class="chip">C++</span>
+          <span class="chip">SQL</span><span class="chip">JavaScript</span><span class="chip">PHP</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <span class="label">Software Engineering</span>
+        <div class="chips">
+          <span class="chip">OOP</span><span class="chip">Data Structures &amp; Algorithms</span>
+          <span class="chip">Software Architecture</span><span class="chip">REST APIs</span>
+          <span class="chip">Microservices</span><span class="chip">Design Patterns</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <span class="label">Backend</span>
+        <div class="chips">
+          <span class="chip">FastAPI</span><span class="chip">Flask</span><span class="chip">Django</span>
+          <span class="chip">JWT</span><span class="chip">Async Programming</span>
+          <span class="chip">API Integration</span><span class="chip">JSON</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <span class="label">Databases</span>
+        <div class="chips">
+          <span class="chip">MySQL</span><span class="chip">PostgreSQL</span><span class="chip">MongoDB</span>
+          <span class="chip">Redis</span><span class="chip">Database Design</span><span class="chip">Normalization</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <span class="label">Machine Learning &amp; AI</span>
+        <div class="chips">
+          <span class="chip">Machine Learning</span><span class="chip">Deep Learning</span>
+          <span class="chip">Computer Vision</span><span class="chip">PyTorch</span>
+          <span class="chip">OpenCV</span><span class="chip">YOLO</span><span class="chip">CUDA</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <span class="label">LLM &amp; AI</span>
+        <div class="chips">
+          <span class="chip">LLM Integration</span><span class="chip">RAG</span>
+          <span class="chip">Prompt Engineering</span><span class="chip">Tool Calling</span>
+          <span class="chip">AI Agents</span><span class="chip">Vector Databases</span><span class="chip">Ollama</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <span class="label">Tools</span>
+        <div class="chips">
+          <span class="chip">Docker</span><span class="chip">Git</span><span class="chip">GitHub</span>
+          <span class="chip">Linux</span><span class="chip">n8n</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="sec-head"><span class="num mono">03</span><h2>Key Projects</h2></div>
+      <div class="projects">
+
+        <article class="project bbox">
+          <div class="project-top">
+            <h3>NewMeans</h3>
+            <a class="ext" href="https://newmeansapp.com" target="_blank" rel="noopener">newmeansapp.com ↗</a>
+          </div>
+          <p>AI-powered news platform that collects articles from multiple sources via
+          REST APIs and generates AI summaries. Multiple AI providers with API key
+          rotation and fallback handling for fault tolerance. Available on web, iOS and
+          Android.</p>
+          <div class="chips">
+            <span class="chip">REST API</span><span class="chip">MongoDB</span>
+            <span class="chip">Multi-provider AI</span><span class="chip">Web · iOS · Android</span>
+          </div>
+        </article>
+
+        <article class="project bbox">
+          <div class="project-top"><h3>ARCHISAFE</h3></div>
+          <p>Computer vision system for industrial safety monitoring — PPE detection,
+          worker safety, model training, evaluation, and real-time inference.</p>
+          <div class="chips">
+            <span class="chip">YOLO</span><span class="chip">PyTorch</span>
+            <span class="chip">OpenCV</span><span class="chip">CUDA</span>
+          </div>
+        </article>
+
+        <article class="project bbox">
+          <div class="project-top"><h3>AI-Powered Travel Planner</h3></div>
+          <p>FastAPI backend combining LLMs, RAG, vector search, Ollama, and Google
+          OR-Tools to generate and optimize personalized travel itineraries.</p>
+          <div class="chips">
+            <span class="chip">FastAPI</span><span class="chip">RAG</span>
+            <span class="chip">Ollama</span><span class="chip">OR-Tools</span>
+          </div>
+        </article>
+
+        <article class="project bbox">
+          <div class="project-top"><h3>SekCV</h3></div>
+          <p>AI-powered ATS analysis platform using LLMs and keyword extraction to
+          compare resumes with job descriptions and generate structured candidate
+          evaluations.</p>
+          <div class="chips">
+            <span class="chip">LLM</span><span class="chip">Keyword Extraction</span>
+            <span class="chip">ATS Analysis</span>
+          </div>
+        </article>
+
+        <article class="project bbox">
+          <div class="project-top"><h3>IronLog</h3></div>
+          <p>Full-stack workout tracking application with a normalized relational MySQL
+          database, REST-style backend services, and a responsive interface for
+          progressive overload tracking.</p>
+          <div class="chips">
+            <span class="chip">MySQL</span><span class="chip">REST</span><span class="chip">Full-stack</span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="sec-head"><span class="num mono">04</span><h2>Experience &amp; Education</h2></div>
+
+      <div class="exp-row">
+        <div class="exp-date mono">2025 — 2026</div>
+        <div class="exp-role">
+          <h3>Department Assistant Student</h3>
+          <div class="exp-org">İstanbul Topkapı University — Dept. of Software Engineering</div>
+          <ul>
+            <li>Supported faculty members and department operations with academic
+            documents, course materials, technical tasks, and digital workflows.</li>
+            <li>Prepared and maintained departmental reports, meeting documents, and
+            academic process documentation.</li>
+            <li>Assisted with communication and coordination between students and
+            academic staff during departmental activities.</li>
+            <li>Supported preparation and organization of digital documents,
+            presentations, spreadsheets, and other department materials.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-row">
+        <div class="exp-date mono">Exp. 2027</div>
+        <div class="exp-role">
+          <h3>B.Sc. Software Engineering</h3>
+          <div class="exp-org">İstanbul Topkapı University — İstanbul, Türkiye</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" style="border-bottom:none;">
+      <div class="sec-head"><span class="num mono">05</span><h2>Contact</h2></div>
+      <div class="contact-grid">
+        <a class="contact-card bbox" href="mailto:halitgoymen@gmail.com">
+          <span class="label">Email</span><span class="value">halitgoymen@gmail.com</span>
+        </a>
+        <a class="contact-card bbox" href="https://github.com/halitgoymen" target="_blank" rel="noopener">
+          <span class="label">GitHub</span><span class="value">github.com/halitgoymen</span>
+        </a>
+        <a class="contact-card bbox" href="https://linkedin.com/in/halitgoymen" target="_blank" rel="noopener">
+          <span class="label">LinkedIn</span><span class="value">linkedin.com/in/halitgoymen</span>
+        </a>
+        <div class="contact-card bbox static">
+          <span class="label">Location</span><span class="value">İstanbul, Türkiye</span>
+        </div>
+      </div>
+    </section>
+
+    <footer>Halit Göymen · Built with a bounding-box, not a lorem ipsum.</footer>
+  </main>
+</div>
+
+<div class="wrap layout" id="content-tr" hidden>
+  <nav class="rail" aria-label="Bölüm dizini">
+    <span class="rail-indicator" aria-hidden="true"></span>
+    <div class="rail-name">HG</div>
+    <a href="#about-tr"><span class="idx">01</span> Hakkımda</a>
+    <a href="#stack-tr"><span class="idx">02</span> Yetenekler</a>
+    <a href="#projects-tr"><span class="idx">03</span> Projeler</a>
+    <a href="#experience-tr"><span class="idx">04</span> Deneyim</a>
+    <a href="#contact-tr"><span class="idx">05</span> İletişim</a>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="hero-frame bbox">
+        <div class="kicker label">Halit Göymen — Özgeçmiş / 2026</div>
+        <h1><span class="line">Backend &amp;</span><span class="line">Yapay Zeka</span><span class="line">Mühendisi.</span></h1>
+        <div class="hero-role">Yazılım Mühendisliği Öğrencisi · İstanbul, Türkiye</div>
+        <div class="status mono">
+          <span>BÖLÜM: <b>Yazılım Mühendisliği Lisans</b></span>
+          <span>MEZUNİYET: <b>2027 (beklenen)</b></span>
+          <span>ODAK: <b>Backend · Computer Vision · LLM Uygulamaları</b></span>
+        </div>
+      </div>
+    </header>
+
+    <section id="about-tr">
+      <div class="sec-head"><span class="num mono">01</span><h2>Hakkımda</h2></div>
+      <p class="lede">Backend geliştirme, Machine Learning, Computer Vision, RESTful
+      API'ler ve yapay zeka uygulamalarında uygulamalı deneyime sahip dördüncü sınıf
+      Yazılım Mühendisliği öğrencisi.</p>
+      <p>Python, FastAPI, SQL, OOP, veritabanı tasarımı, Docker, LLM entegrasyonu ve RAG
+      konularında deneyimli. Bir yıl Bölüm Asistan Öğrencisi deneyimine sahip; backend
+      mühendisliği, yazılım mimarisi ve üretime yönelik yapay zeka uygulamalarına güçlü
+      ilgi duyuyor.</p>
+    </section>
+
+    <section id="stack-tr">
+      <div class="sec-head"><span class="num mono">02</span><h2>Teknik Yetenekler</h2></div>
+
+      <div class="stack-group">
+        <span class="label">Diller</span>
+        <div class="chips">
+          <span class="chip">Python</span><span class="chip">Java</span><span class="chip">C++</span>
+          <span class="chip">SQL</span><span class="chip">JavaScript</span><span class="chip">PHP</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <span class="label">Yazılım Mühendisliği</span>
+        <div class="chips">
+          <span class="chip">OOP</span><span class="chip">Veri Yapıları &amp; Algoritmalar</span>
+          <span class="chip">Yazılım Mimarisi</span><span class="chip">REST API</span>
+          <span class="chip">Mikroservisler</span><span class="chip">Design Patterns</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <span class="label">Backend</span>
+        <div class="chips">
+          <span class="chip">FastAPI</span><span class="chip">Flask</span><span class="chip">Django</span>
+          <span class="chip">JWT</span><span class="chip">Asenkron Programlama</span>
+          <span class="chip">API Entegrasyonu</span><span class="chip">JSON</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <span class="label">Veritabanları</span>
+        <div class="chips">
+          <span class="chip">MySQL</span><span class="chip">PostgreSQL</span><span class="chip">MongoDB</span>
+          <span class="chip">Redis</span><span class="chip">Veritabanı Tasarımı</span><span class="chip">Normalizasyon</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <span class="label">Machine Learning &amp; AI</span>
+        <div class="chips">
+          <span class="chip">Machine Learning</span><span class="chip">Deep Learning</span>
+          <span class="chip">Computer Vision</span><span class="chip">PyTorch</span>
+          <span class="chip">OpenCV</span><span class="chip">YOLO</span><span class="chip">CUDA</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <span class="label">LLM ve YZ</span>
+        <div class="chips">
+          <span class="chip">LLM Entegrasyonu</span><span class="chip">RAG</span>
+          <span class="chip">Prompt Engineering</span><span class="chip">Tool Calling</span>
+          <span class="chip">AI Agents</span><span class="chip">Vector Databases</span><span class="chip">Ollama</span>
+        </div>
+      </div>
+      <div class="stack-group">
+        <span class="label">Araçlar</span>
+        <div class="chips">
+          <span class="chip">Docker</span><span class="chip">Git</span><span class="chip">GitHub</span>
+          <span class="chip">Linux</span><span class="chip">n8n</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects-tr">
+      <div class="sec-head"><span class="num mono">03</span><h2>Öne Çıkan Projeler</h2></div>
+      <div class="projects">
+
+        <article class="project bbox">
+          <div class="project-top">
+            <h3>NewMeans</h3>
+            <a class="ext" href="https://newmeansapp.com" target="_blank" rel="noopener">newmeansapp.com ↗</a>
+          </div>
+          <p>Çoklu kaynaktan REST API ile haber toplayan, yapay zeka destekli özet üreten
+          cross-platform haber platformu. Birden fazla AI sağlayıcısı, API key rotasyonu
+          ve fallback ile hata toleransı; veri katmanında MongoDB. Web, iOS ve Android'de
+          yayında.</p>
+          <div class="chips">
+            <span class="chip">REST API</span><span class="chip">MongoDB</span>
+            <span class="chip">Multi-provider AI</span><span class="chip">Web · iOS · Android</span>
+          </div>
+        </article>
+
+        <article class="project bbox">
+          <div class="project-top"><h3>ARCHISAFE</h3></div>
+          <p>Endüstriyel güvenlik izleme için geliştirilen Computer Vision sistemi —
+          kişisel koruyucu ekipman (PPE) tespiti, işçi güvenliği, model eğitimi/değerlendirmesi
+          ve gerçek zamanlı çıkarım.</p>
+          <div class="chips">
+            <span class="chip">YOLO</span><span class="chip">PyTorch</span>
+            <span class="chip">OpenCV</span><span class="chip">CUDA</span>
+          </div>
+        </article>
+
+        <article class="project bbox">
+          <div class="project-top"><h3>AI-Powered Travel Planner</h3></div>
+          <p>LLM, RAG, vektör arama, Ollama ve Google OR-Tools kullanan FastAPI backend;
+          kişiselleştirilmiş seyahat planı üretimi ve optimizasyonu.</p>
+          <div class="chips">
+            <span class="chip">FastAPI</span><span class="chip">RAG</span>
+            <span class="chip">Ollama</span><span class="chip">OR-Tools</span>
+          </div>
+        </article>
+
+        <article class="project bbox">
+          <div class="project-top"><h3>SekCV</h3></div>
+          <p>LLM ve anahtar kelime çıkarımı ile özgeçmiş–iş ilanı karşılaştırması yapan,
+          yapılandırılmış aday değerlendirmesi üreten yapay zeka destekli ATS analiz
+          platformu.</p>
+          <div class="chips">
+            <span class="chip">LLM</span><span class="chip">Keyword Extraction</span>
+            <span class="chip">ATS Analysis</span>
+          </div>
+        </article>
+
+        <article class="project bbox">
+          <div class="project-top"><h3>IronLog</h3></div>
+          <p>Normalize edilmiş ilişkisel MySQL veritabanı, REST tarzı backend servisleri ve
+          duyarlı (responsive) arayüzle geliştirilen, antrenman ve progressive overload
+          takibi için full-stack uygulama.</p>
+          <div class="chips">
+            <span class="chip">MySQL</span><span class="chip">REST</span><span class="chip">Full-stack</span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="experience-tr">
+      <div class="sec-head"><span class="num mono">04</span><h2>Deneyim ve Eğitim</h2></div>
+
+      <div class="exp-row">
+        <div class="exp-date mono">2025 — 2026</div>
+        <div class="exp-role">
+          <h3>Bölüm Asistan Öğrencisi</h3>
+          <div class="exp-org">İstanbul Topkapı Üniversitesi — Yazılım Mühendisliği Bölümü</div>
+          <ul>
+            <li>Öğretim üyeleri ve bölüm operasyonlarına akademik doküman, ders
+            materyali, teknik görev ve dijital iş akışı desteği sağladı.</li>
+            <li>Bölüm raporları, toplantı dokümanları ve akademik süreç
+            dokümantasyonunu hazırladı ve güncel tuttu.</li>
+            <li>Öğrenciler ve akademik personel arasındaki iletişim ve koordinasyona
+            destek oldu.</li>
+            <li>Dijital doküman, sunum, tablo ve diğer bölüm materyallerinin
+            hazırlanması ve organizasyonuna destek verdi.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-row">
+        <div class="exp-date mono">Beklenen 2027</div>
+        <div class="exp-role">
+          <h3>Yazılım Mühendisliği Lisans</h3>
+          <div class="exp-org">İstanbul Topkapı Üniversitesi — İstanbul, Türkiye</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact-tr" style="border-bottom:none;">
+      <div class="sec-head"><span class="num mono">05</span><h2>İletişim</h2></div>
+      <div class="contact-grid">
+        <a class="contact-card bbox" href="mailto:halitgoymen@gmail.com">
+          <span class="label">E-posta</span><span class="value">halitgoymen@gmail.com</span>
+        </a>
+        <a class="contact-card bbox" href="https://github.com/halitgoymen" target="_blank" rel="noopener">
+          <span class="label">GitHub</span><span class="value">github.com/halitgoymen</span>
+        </a>
+        <a class="contact-card bbox" href="https://linkedin.com/in/halitgoymen" target="_blank" rel="noopener">
+          <span class="label">LinkedIn</span><span class="value">linkedin.com/in/halitgoymen</span>
+        </a>
+        <div class="contact-card bbox static">
+          <span class="label">Konum</span><span class="value">İstanbul, Türkiye</span>
+        </div>
+      </div>
+    </section>
+
+    <footer>Halit Göymen · Lorem ipsum değil, bounding box ile inşa edildi.</footer>
+  </main>
+</div>
+
+</div>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // buttery mouse-wheel smoothing (inertia-style easing); touch/trackpad keep native momentum
+  if (!reduceMotion) {
+    let currentY = window.scrollY;
+    let targetY = window.scrollY;
+    let rafId = null;
+    const ease = 0.1;
+    const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
+
+    function step(){
+      currentY += (targetY - currentY) * ease;
+      if (Math.abs(targetY - currentY) < 0.4) {
+        currentY = targetY;
+        window.scrollTo(0, currentY);
+        rafId = null;
+        return;
+      }
+      window.scrollTo(0, currentY);
+      rafId = requestAnimationFrame(step);
+    }
+
+    window.addEventListener('wheel', (e) => {
+      if (e.ctrlKey) return; // let pinch-zoom through untouched
+      e.preventDefault();
+      targetY = Math.max(0, Math.min(targetY + e.deltaY, maxScroll()));
+      if (!rafId) rafId = requestAnimationFrame(step);
+    }, { passive: false });
+
+    // stay in sync with keyboard scroll, scrollbar drag, and anchor-link jumps
+    window.addEventListener('scroll', () => {
+      if (!rafId) { currentY = window.scrollY; targetY = window.scrollY; }
+    }, { passive: true });
+  }
+
+  // scroll-triggered corner-bracket reveal; content stays visible if this never runs
+  if (!reduceMotion) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.bbox').forEach(b => { b.classList.add('will-animate'); io.observe(b); });
+  }
+
+  // per-rail scroll-spy + sliding indicator
+  function positionIndicator(rail){
+    const indicator = rail.querySelector('.rail-indicator');
+    const active = rail.querySelector('a.active');
+    if (!indicator) return;
+    if (!active) { indicator.style.opacity = 0; return; }
+    indicator.style.opacity = 1;
+    indicator.style.transform = `translateY(${active.offsetTop}px)`;
+    indicator.style.height = active.offsetHeight + 'px';
+  }
+  function setActive(link){
+    const rail = link.closest('.rail');
+    rail.querySelectorAll('a').forEach(a => a.classList.remove('active'));
+    link.classList.add('active');
+    positionIndicator(rail);
+  }
+  document.querySelectorAll('.rail').forEach(rail => {
+    const links = [...rail.querySelectorAll('a')];
+    const sections = links.map(l => document.querySelector(l.getAttribute('href')));
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const i = sections.indexOf(entry.target);
+        if (i === -1) return;
+        setActive(links[i]);
+      });
+    }, { rootMargin: '-40% 0px -50% 0px' });
+    sections.forEach(s => s && obs.observe(s));
+    links.forEach(l => l.addEventListener('click', () => setActive(l)));
+    if (links[0]) setActive(links[0]);
+  });
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.rail').forEach(positionIndicator);
+  });
+
+  // language switch: sliding thumb + brief crossfade
+  const langRoot = document.getElementById('lang-root');
+  const contentEn = document.getElementById('content-en');
+  const contentTr = document.getElementById('content-tr');
+  function updateLangButtons(lang){
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.setAttribute('aria-pressed', b.dataset.langBtn === lang ? 'true' : 'false');
+    });
+  }
+  function switchLang(lang){
+    if (document.documentElement.getAttribute('data-lang') === lang) return;
+    const apply = () => {
+      contentEn.hidden = lang !== 'en';
+      contentTr.hidden = lang !== 'tr';
+      document.documentElement.lang = lang;
+      document.documentElement.setAttribute('data-lang', lang);
+      try { localStorage.setItem('cv-lang', lang); } catch (e) {}
+      updateLangButtons(lang);
+      document.querySelectorAll('.rail').forEach(positionIndicator);
+    };
+    if (reduceMotion) { apply(); return; }
+    langRoot.classList.add('swapping');
+    setTimeout(() => {
+      apply();
+      requestAnimationFrame(() => requestAnimationFrame(() => langRoot.classList.remove('swapping')));
+    }, 180);
+  }
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchLang(btn.dataset.langBtn));
+  });
+
+  let initialLang = 'en';
+  try { initialLang = localStorage.getItem('cv-lang') || 'en'; } catch (e) {}
+  if (initialLang === 'tr') switchLang('tr'); else { document.documentElement.setAttribute('data-lang','en'); updateLangButtons('en'); }
 </script>
-      <section class="education" id="education">
-        <h2 class="heading">My <span>Education</span></h2>
-        <div class="timeline">
-            <div class="container right">
-                <div class="content">
-                    <div class="tag">
-                        <h2>University</h2>
-                    </div>
-                    <div class="decs">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio dolore dicta est aut aliquam
-                            vero. Dolore obcaecati veritatis sed eos?</p>
-                    </div>
-                </div>
-            </div>
-            <div class="container left">
-                <div class="content">
-                    <div class="tag">
-                        <h2>High School</h2>
-                    </div>
-                    <div class="decs">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio dolore dicta est aut aliquam
-                            vero. Dolore obcaecati veritatis sed eos?</p>
-                    </div>
-                </div>
-            </div>
-            <div class="container right">
-                <div class="content">
-                    <div class="tag">
-                        <h2>Internship</h2>
-                    </div>
-                    <div class="decs">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio dolore dicta est aut aliquam
-                            vero. Dolore obcaecati veritatis sed eos?</p>
-                    </div>
-                </div>
-            </div>
-            <div class="container left">
-                <div class="content">
-                    <div class="tag">
-                        <h2>Job</h2>
-                    </div>
-                    <div class="decs">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio dolore dicta est aut aliquam
-                            vero. Dolore obcaecati veritatis sed eos?</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> 
-
-//-->
-<section class="contact" id="contact">
-    <h2 class="heading">Contact <span>Me</span></h2>
-    <form action="https://formspree.io/f/mzzpwvrr" method="POST">
-        <div class="input-box">
-            <input type="text" name="name" placeholder="Name" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="text" name="subject" placeholder="Subject" required>
-        </div>
-        <textarea name="message" id="message" cols="30" rows="10" placeholder="Your Message" required></textarea>
-        <input type="submit" value="Send Message" class="btn">
-    </form>
-</section>
-
-<footer class="footer">
-    <div class="social">
-        <a target="_blank" href="https://www.linkedin.com/in/halit-g%C3%B6ymen-565331211/"><i class="fa-brands fa-linkedin"></i></a>
-        <a target="_blank" href="https://github.com/halitgoymen"><i class="fa-brands fa-github"></i></a>
-        <a target="_blank" href="https://www.instagram.com/halidsama/"><i class="fa-brands fa-instagram"></i></a>
-        <a target="_blank" href="https://x.com/halidsama"><i class="fa-brands fa-square-x-twitter"></i></a>
-    </div>
-    <p class="copyright">
-        © Halit Göymen | All Right Reserved
-    </p>
-</footer>
-</footer>
 </body>
-
 </html>
